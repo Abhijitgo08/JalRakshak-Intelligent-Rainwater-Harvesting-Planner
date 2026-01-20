@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | JalRakshak 1.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Leaflet.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+  <style>
+  :root{
+    --glass-bg: rgba(255,255,255,0.40);
+    --panel-bg: rgba(255,255,255,0.92);
+    --muted: #6b7280;
+    --accent-green: #16a34a;
+    --card-radius: 12px;
+    --shadow-1: 0 6px 18px rgba(0,0,0,0.08);
+    --shadow-2: 0 8px 30px rgba(0,0,0,0.12);
+  }
+  html,body{height:100%;margin:0;padding:0;}
+  body {
+    font-family: 'Inter', sans-serif;
+    background: url('back.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    color: #111827;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  h1,h2,h3{ font-family: 'Poppins', sans-serif; }
+  nav { z-index: 10050; }
+  nav img { object-fit:cover; }
+  .tip-box { background: var(--panel-bg); border-radius: 10px; padding: 14px; box-shadow: var(--shadow-1); }
+  .modal { width: min(780px, 94%); background: white; border-radius: 10px; padding: 18px; box-shadow: var(--shadow-2); }
+  .card { background: var(--glass-bg); backdrop-filter: blur(6px); border-radius: var(--card-radius); box-shadow: var(--shadow-1); }
+  #map {
+    height: 400px; width:100%; border-radius: 12px; overflow: hidden;
+    box-shadow: var(--shadow-2); position: relative; z-index: 0;
+  }
+  .leaflet-container { z-index: 0 !important; background: transparent; }
+  .leaflet-pane, .leaflet-overlay-pane, .leaflet-shadow-pane, .leaflet-marker-pane { z-index: 0 !important; }
+  .surface-dropdown { position: relative; display: inline-block; width: 100%; z-index: 10010; }
+  .surface-dropdown-btn {
+    width: 100%; text-align: left; background: white; border: 1px solid #e5e7eb;
+    padding: 0.5rem 0.75rem; border-radius: 0.5rem; display: flex; align-items: center;
+    justify-content: space-between; cursor: pointer;
+    transition: box-shadow .12s ease, transform .08s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .surface-dropdown-btn:focus { outline: 3px solid rgba(99,102,241,0.12); }
+  .surface-dropdown-menu {
+    position: absolute; z-index: 11000 !important; left: 0; right: 0;
+    background: white; border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    border-radius: 8px; margin-top: 10px; padding: 8px;
+    max-height: 260px; overflow: auto; pointer-events: auto;
+  }
+  .surface-dropdown.open { padding-bottom: 280px; }
+  .surface-item { display:flex; align-items:center; gap:10px; padding:10px 8px; border-radius:6px; cursor:pointer; user-select:none; }
+  .surface-item:hover, .surface-item:focus { background: rgba(0,0,0,0.03); outline: none; }
+  .surface-item input[type="checkbox"] { width:16px; height:16px; margin:0; accent-color: var(--accent-green); }
+  .surface-item .label { font-size:13px; color:#111827; }
+  .surface-note { font-size:12px; color:var(--muted); margin-top:6px; padding: 0 6px; }
+  .surface-item[tabindex="0"]:focus { box-shadow: inset 0 0 0 2px rgba(16,185,129,0.07); }
+  @media (max-width:520px) {
+    .surface-dropdown-menu { position: static; margin-top:8px; box-shadow: 0 6px 16px rgba(0,0,0,0.10); }
+  }
+  input[type="number"], select, textarea {
+    border: 1px solid #e5e7eb; padding: .6rem .75rem; border-radius: 8px;
+    background: rgba(255,255,255,0.78); min-height: 44px;
+  }
+  input[type="number"]:focus, select:focus, textarea:focus { outline: 3px solid rgba(99,102,241,0.12); }
+  button { font-family: inherit; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:.6rem .9rem; border-radius:10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+  .btn-primary { background: var(--accent-green); color: white; border: none; }
+  .btn-ghost { background: white; color: #111827; border: 1px solid #e5e7eb; }
+  .modal-backdrop { position: fixed; inset:0; background: rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:10040; }
+  .modal { max-width: 780px; width: 100%; border-radius: 10px; }
+  label { color: #111827; font-weight: 500; }
+  .muted { color: var(--muted); font-size: 13px; }
+  #analysisResult { color: #111827; }
+  #designCard, #outputCard { min-height: 90px; }
+  footer { position: relative; z-index: 10020; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  .hidden { display:none !important; }
+  .sr-only { position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
+  .no-clip { overflow: visible !important; }
+  </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="flex items-center justify-between px-8 py-4 shadow-md bg-white/30 backdrop-blur-md">
+  <div class="flex items-center space-x-3">
+    <img src="LOGO.jpeg" alt="JalRakshak Logo" class="w-12 h-12">
+    <span class="text-2xl font-bold text-white">JalRakshak 1.0</span>
+  </div>
+  <div class="flex items-center space-x-3">
+    <a href="index.html" class="px-4 py-2 rounded-lg bg-green-600/80 backdrop-blur-sm text-white font-semibold hover:bg-green-700 transition">
+      ← Back to Home
+    </a>
+    <a>
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Profile" class="w-12 h-12 rounded-full border-2 border-white cursor-pointer hover:scale-105 transition">
+    </a>
+  </div>
+</nav>
+
+<main class="flex-1 px-8 py-10">
+  <h1 class="text-3xl font-bold text-white mb-4">Welcome, <span id="userName">User</span> 👋</h1>
+
+  <!-- Tutorial button -->
+  <div class="mb-4">
+    <button id="showTutorial" class="px-3 py-2 rounded-md bg-white/90 text-green-700 font-medium shadow-sm hover:scale-105 transition">Show Quick Tutorial</button>
+  </div>
+
+  <!-- Inputs -->
+  <section class="mb-8">
+    <h2 class="text-2xl font-semibold text-white mb-4">1. Inputs</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Location</label>
+        <select id="locationSelect" class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70">
+          <option value="">Loading locations…</option>
+        </select>
+        <p id="locationMeta" class="mt-2 text-sm text-gray-700 hidden"></p>
+      </div>
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Number of Dwellers</label>
+        <input type="number" id="dwellersInput" min="1" value="1" class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70">
+      </div>
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Roof Type</label>
+        <select id="roofTypeInput" class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70">
+          <option value="Concrete">Concrete</option>
+          <option value="Metal">Metal</option>
+        </select>
+      </div>
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Floors</label>
+        <input type="number" id="floors" placeholder="e.g. 1" min="1" value="1" class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70">
+        <p class="mt-2 text-xs text-gray-600">Use to calculate the pipe length/p>
+      </div>
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Soil Type</label>
+        <select id="soilType" class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70">
+          <option value="loamy" selected>Loamy</option>
+          <option value="sandy">Sandy</option>
+          <option value="clayey">Clayey</option>
+        </select>
+      </div>
+      <!-- Open-space -->
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow col-span-2">
+        <label class="inline-flex items-center space-x-3">
+          <input id="includeOpenSpace" type="checkbox" class="rounded border-gray-300" />
+          <span class="text-sm font-medium text-gray-700">Include open-space / courtyard</span>
+        </label>
+        <p class="mt-2 text-xs text-gray-600">If enabled: draw a ground polygon and pick surface types from the dropdown below.</p>
+        <label class="block mt-4 text-sm font-medium text-gray-700">Open-space Surface Types</label>
+        <div class="mt-2">
+          <div class="surface-dropdown" id="surfaceDropdownRoot">
+            <button type="button" id="surfaceDropdownBtn" class="surface-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+              <span id="surfaceDropdownLabel" style="font-size:14px; color:#374151;">Select surface types…</span>
+              <svg id="surfaceDropdownCaret" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.584l3.71-3.396a.75.75 0 111.02 1.098l-4 3.666a.75.75 0 01-1.02 0l-4-3.666a.75.75 0 01-.02-1.06z" clip-rule="evenodd" /></svg>
+            </button>
+            <div id="surfaceDropdownMenu" class="surface-dropdown-menu" style="display:none;" role="menu" aria-hidden="true">
+              <div class="surface-item" data-key="water_tight" tabindex="0">
+                <input type="checkbox" id="surf_water_tight" value="water_tight" />
+                <label for="surf_water_tight" class="label">Water-tight / Paved <span class="text-xs text-gray-500">≈0.70–0.95</span></label>
+              </div>
+              <div class="surface-item" data-key="asphalt" tabindex="0">
+                <input type="checkbox" id="surf_asphalt" value="asphalt" />
+                <label for="surf_asphalt" class="label">Asphalt pavement <span class="text-xs text-gray-500">≈0.85–0.90</span></label>
+              </div>
+              <div class="surface-item" data-key="open_joints" tabindex="0">
+                <input type="checkbox" id="surf_open_joints" value="open_joints" />
+                <label for="surf_open_joints" class="label">Stone/brick (open joints) <span class="text-xs text-gray-500">≈0.50–0.70</span></label>
+              </div>
+              <div class="surface-item" data-key="unpaved" tabindex="0">
+                <input type="checkbox" id="surf_unpaved" value="unpaved" />
+                <label for="surf_unpaved" class="label">Unpaved / vacant lot <span class="text-xs text-gray-500">≈0.10–0.30</span></label>
+              </div>
+              <div class="surface-item" data-key="parks" tabindex="0">
+                <input type="checkbox" id="surf_parks" value="parks" />
+                <label for="surf_parks" class="label">Parks / lawns / meadows <span class="text-xs text-gray-500">≈0.05–0.25</span></label>
+              </div>
+              <div class="surface-note">Click each item to toggle. Multiple items allowed. Selections are used to compute an average runoff coefficient.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-semibold text-white mb-4">2. Mark Your Roof (and Open Space)</h2>
+    <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+      <div id="map"></div>
+      <p class="mt-3 text-sm text-gray-700">Draw roof first, then ground (if enabled).</p>
+      <p class="mt-2 font-semibold text-blue-600">Roof Area: <span id="roofArea">0</span> m²</p>
+      <p class="mt-1 font-semibold text-orange-600 hidden" id="groundAreaWrap">Ground Area: <span id="groundArea">0</span> m²</p>
+    </div>
+  </section>
+
+  <!-- Analysis -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-white mb-4">3. Analysis</h2>
+    <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow flex flex-col items-center">
+      <button id="analyzeBtn" class="bg-green-600/90 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+        Run Feasibility Analysis
+      </button>
+      <div id="analysisResult" class="mt-6 text-center text-gray-800 hidden"></div>
+    </div>
+  </section>
+
+  <!-- Design -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-white mb-4">4. Design Suggestions</h2>
+    <div id="designCard" class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow hidden"></div>
+  </section>
+
+  <!-- Report -->
+  <section>
+    <h2 class="text-2xl font-semibold text-white mb-4">5. Impact Report</h2>
+    <div id="outputCard" class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow hidden text-center"></div>
+  </section>
+</main>
+
+<footer class="bg-gray-900/70 backdrop-blur-md text-gray-200 text-center py-6">
+  <p>2025 Team JalRakshak_1.0</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="dashboard.js"></script>
+
+<!-- Fixed dropdown behavior -->
+<script>
+(function () {
+  const root = document.getElementById('surfaceDropdownRoot');
+  const btn = document.getElementById('surfaceDropdownBtn');
+  const menu = document.getElementById('surfaceDropdownMenu');
+  const labelEl = document.getElementById('surfaceDropdownLabel');
+
+  function updateLabel() {
+    const vals = getSelectedGroundSurfaces();
+    if (!vals || vals.length === 0) {
+      labelEl.textContent = 'Select surface types…';
+    } else if (vals.length === 1) {
+      const el = menu.querySelector('input[type="checkbox"][value="' + vals[0] + '"]');
+      labelEl.textContent = el ? el.parentElement.querySelector('.label').innerText.trim() : vals[0];
+    } else {
+      labelEl.textContent = vals.length + ' selected';
+    }
+  }
+
+  function openMenu() {
+    menu.style.display = 'block';
+    btn.setAttribute('aria-expanded', 'true');
+    root.classList.add('open'); // push map down
+  }
+
+  function closeMenu() {
+    menu.style.display = 'none';
+    btn.setAttribute('aria-expanded', 'false');
+    root.classList.remove('open'); // reset padding
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = menu.style.display === 'block';
+    if (isOpen) closeMenu();
+    else openMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  document.addEventListener('click', (ev) => {
+    if (!btn.contains(ev.target) && !menu.contains(ev.target)) closeMenu();
+  });
+
+  menu.querySelectorAll('.surface-item').forEach(row => {
+    const cb = row.querySelector('input[type="checkbox"]');
+    row.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      if (ev.target.tagName.toLowerCase() !== 'input') {
+        cb.checked = !cb.checked;
+      }
+      updateLabel();
+    });
+    row.addEventListener('keydown', (ev) => {
+      if (ev.key === ' ' || ev.key === 'Enter') {
+        ev.preventDefault();
+        cb.checked = !cb.checked;
+        updateLabel();
+      }
+    });
+    cb.addEventListener('change', updateLabel);
+  });
+
+  window.getSelectedGroundSurfaces = function () {
+    const v = [];
+    menu.querySelectorAll('input[type="checkbox"]').forEach(i => { if (i.checked) v.push(i.value); });
+    return v;
+  };
+
+  const include = document.getElementById('includeOpenSpace');
+  include.addEventListener('change', () => {
+    if (include.checked) {
+      openMenu();
+      setTimeout(updateLabel, 10);
+    } else {
+      closeMenu();
+    }
+  });
+
+  updateLabel();
+})();
+</script>
+
+<!-- Tutorial Modal -->
+<div id="tutorialModal" class="modal-backdrop" style="display:none;">
+  <div class="modal">
+    <h3 class="text-xl font-semibold mb-2">Quick Tutorial</h3>
+    <div id="tutorialContent" class="text-sm text-gray-700"></div>
+    <div class="mt-4 flex justify-between">
+      <button id="tutorialPrev" class="px-3 py-2 rounded bg-gray-100">Prev</button>
+      <div class="space-x-2">
+        <button id="tutorialClose" class="px-3 py-2 rounded bg-red-100 text-red-700">Close</button>
+        <button id="tutorialNext" class="px-3 py-2 rounded bg-green-600 text-white">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tutorialSteps = [
+    "Step 1: Fill all the details in Inputs.",
+    "Step 2: Draw your roof polygon first. Finish it to compute roof area.",
+    "Step 3: If you included open-space, draw the ground polygon in the same map(orange).",
+    "Step 4: Use the Open-space dropdown to pick surface types (click to open).",
+    "Step 5: Run analysis. Download your detail report and the check feasibility(Y/N)"
+  ];
+  let tutorialIndex = 0;
+  function showTutorialModal() {
+    tutorialIndex = 0;
+    document.getElementById('tutorialContent').innerHTML = tutorialSteps[tutorialIndex];
+    document.getElementById('tutorialModal').style.display = 'flex';
+  }
+  function closeTutorialModal() { document.getElementById('tutorialModal').style.display = 'none'; }
+  function nextTutorial() {
+    if (tutorialIndex < tutorialSteps.length - 1) {
+      tutorialIndex++;
+      document.getElementById('tutorialContent').innerHTML = tutorialSteps[tutorialIndex];
+    }
+  }
+  function prevTutorial() {
+    if (tutorialIndex > 0) {
+      tutorialIndex--;
+      document.getElementById('tutorialContent').innerHTML = tutorialSteps[tutorialIndex];
+    }
+  }
+  document.getElementById('showTutorial').addEventListener('click', showTutorialModal);
+  document.getElementById('tutorialClose').addEventListener('click', closeTutorialModal);
+  document.getElementById('tutorialNext').addEventListener('click', nextTutorial);
+  document.getElementById('tutorialPrev').addEventListener('click', prevTutorial);
+</script>
+</body>
+</html>

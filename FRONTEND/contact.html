@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us | JalRakshak 1.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --nav-h: 72px; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding-top: var(--nav-h);
+      background: url('back.jpeg') no-repeat center center;
+      background-size: cover;
+    }
+
+    h1,h2,h3 { font-family: 'Poppins', sans-serif; }
+
+    nav {
+      min-height: var(--nav-h);
+      z-index: 1000;
+      position: fixed; top: 0; left: 0; right: 0;
+    }
+
+    main, footer { position: relative; z-index: 10; }
+
+    #contactForm { scroll-margin-top: calc(var(--nav-h) + 16px); }
+
+    .modal-fade-enter { opacity: 0; transform: translateY(6px); transition: opacity .18s ease, transform .18s ease; }
+    .modal-fade-enter.modal-show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col relative">
+
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-6 md:px-8 py-3 backdrop-blur-nav bg-gradient-to-r from-green-700/75 to-blue-600/65 shadow-md">
+    <a href="index.html" class="flex items-center space-x-3">
+      <img src="LOGO.jpeg" alt="JalRakshak Logo" class="w-10 h-10 rounded-full shadow-lg">
+      <span class="text-2xl font-bold text-white">JalRakshak 1.0</span>
+    </a>
+    <a href="index.html" class="hidden md:inline px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition">
+      ← Back to Home
+    </a>
+  </nav>
+
+  <!-- Main -->
+  <main class="flex-1 p-6 flex flex-col items-center">
+    <form id="contactForm"
+      class="w-full max-w-2xl bg-white/90 p-10 rounded-2xl shadow-lg space-y-6 text-center"
+      aria-label="Contact form">
+
+      <div>
+        <p class="text-3xl font-bold text-green-700 mb-3">Have questions or feedback?</p>
+        <p class="text-gray-700 mt-2">Fill out the form below and Team JalRakshak will get back to you soon.</p>
+      </div>
+
+      <div class="text-left">
+        <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
+        <input type="text" id="name" name="name" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+          placeholder="Enter your name">
+      </div>
+
+      <div class="text-left">
+        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+        <input type="email" id="email" name="email" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+          placeholder="Enter your email">
+      </div>
+
+      <div class="text-left">
+        <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+        <textarea id="message" name="message" required rows="5"
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+          placeholder="Type your message"></textarea>
+      </div>
+
+      <div class="flex justify-center">
+        <button id="submitBtn" type="submit"
+          class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition">
+          Send Message
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 bg-opacity-90 text-gray-300 text-center py-6 mt-6">
+    <p>2025 JalRakshak 1.0</p>
+  </footer>
+
+  <!-- Popup Modal -->
+  <div id="popupModal" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden z-50">
+    <div id="popupInner" class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full modal-fade-enter">
+      <p id="popupMessage" class="text-lg font-semibold mb-0 text-gray-800">Message</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ENDPOINT = "https://formspree.io/f/xzzjbpbo";
+      const form = document.getElementById("contactForm");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const popupModal = document.getElementById("popupModal");
+      const popupInner = document.getElementById("popupInner");
+      const popupMessage = document.getElementById("popupMessage");
+
+      function showPopup(message, type = "info", redirect = false) {
+        popupMessage.textContent = message;
+        popupMessage.className = "text-lg font-semibold mb-0";
+
+        if (type === "success") popupMessage.classList.add("text-green-700");
+        else if (type === "error") popupMessage.classList.add("text-red-600");
+        else popupMessage.classList.add("text-gray-800");
+
+        popupModal.classList.remove("hidden");
+        requestAnimationFrame(() => popupInner.classList.add("modal-show"));
+
+        // Auto-close after 2s
+        setTimeout(() => {
+          popupInner.classList.remove("modal-show");
+          setTimeout(() => {
+            popupModal.classList.add("hidden");
+            if (redirect) window.location.href = "index.html";
+          }, 150);
+        }, 2000);
+      }
+
+      function setLoading(isLoading) {
+        submitBtn.disabled = isLoading;
+        submitBtn.textContent = isLoading ? "Sending…" : (submitBtn.dataset.orig || "Send Message");
+        submitBtn.classList.toggle("opacity-75", isLoading);
+        submitBtn.classList.toggle("cursor-not-allowed", isLoading);
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+          const formData = new FormData(form);
+          const res = await fetch(ENDPOINT, {
+            method: "POST",
+            body: formData,
+            headers: { Accept: "application/json" }
+          });
+
+          if (res.ok) {
+            showPopup(" Thank you! Redirecting to home...", "success", true);
+            form.reset();
+          } else {
+            showPopup(" Failed to send message. Please try again later.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          showPopup(" Error: Could not connect to server.", "error");
+        } finally {
+          setLoading(false);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

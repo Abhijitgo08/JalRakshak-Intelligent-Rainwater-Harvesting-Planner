@@ -1,0 +1,9 @@
+[
+  { "state":"Maharashtra", "district":"Pune",     "rainfall_mm": 900 },
+  { "state":"Maharashtra", "district":"Mumbai",   "rainfall_mm": 2200 },
+  { "state":"Maharashtra", "district":"Nagpur",   "rainfall_mm": 1100 },
+  { "state":"Maharashtra", "district":"Nashik",   "rainfall_mm": 1100 },
+  { "state":"Karnataka",  "district":"Bengaluru","rainfall_mm": 900 },
+  { "state":"Delhi",      "district":"New Delhi","rainfall_mm": 630 },
+  { "state":"Maharashtra", "district":"Ahilyanagar", "rainfall_mm": 500 }
+]

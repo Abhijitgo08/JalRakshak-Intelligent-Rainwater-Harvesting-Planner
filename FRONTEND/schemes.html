@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Schemes | JalRakshak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f9fafb; }
+    h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="text-gray-900">
+
+<!-- Navbar -->
+<nav class="flex items-center justify-between px-6 py-4 bg-green-700 text-white shadow">
+  <div class="flex items-center gap-2">
+    <img src="LOGO.jpeg" alt="Logo" class="w-10 h-10 rounded-full">
+    <h1 class="text-xl font-bold">JalRakshak</h1>
+  </div>
+  <a href="index.html" class="px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition">← Back to Home</a>
+</nav>
+
+<!-- Header -->
+<header class="text-center py-12 bg-green-50">
+  <h2 class="text-4xl font-bold text-green-800">Government Schemes for Rainwater Harvesting</h2>
+  <p class="mt-4 text-lg text-gray-700">Explore available schemes, check required documents, and apply online.</p>
+</header>
+
+<!-- Schemes Section -->
+<main class="max-w-5xl mx-auto px-6 py-12 space-y-10">
+
+  <!---- Scheme 1 ---->
+  <div class="bg-white shadow-lg rounded-xl p-8 border-l-4 border-green-600">
+    <h3 class="text-2xl font-semibold text-green-700">Atal Bhujal Yojana (ABY)</h3>
+    <p class="mt-2 text-gray-700">Central scheme focused on groundwater recharge and sustainable water use.</p>
+
+    <div class="mt-6 flex gap-4 flex-wrap">
+      <a href="https://jalshakti-dowr.gov.in/" target="_blank"
+         class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+        Apply Now
+      </a>
+      <button onclick="downloadDocs('aby')" 
+              class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+        Required Documents
+      </button>
+    </div>
+  </div>
+
+  <!-- Scheme 2 -->
+  <div class="bg-white shadow-lg rounded-xl p-8 border-l-4 border-yellow-500">
+    <h3 class="text-2xl font-semibold text-yellow-700">Mahatma Gandhi National Rural Employment Guarantee Act (MGNREGA)</h3>
+    <p class="mt-2 text-gray-700">Supports rural households with funding for rainwater harvesting structures.</p>
+
+    <div class="mt-6 flex gap-4 flex-wrap">
+      <a href="https://nrega.nic.in/" target="_blank"
+         class="bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition">
+        Apply Now
+      </a>
+      <button onclick="downloadDocs('mgnrega')" 
+              class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+        Required Documents
+      </button>
+    </div>
+  </div>
+
+  <! Scheme 3 >
+  <div class="bg-white shadow-lg rounded-xl p-8 border-l-4 border-blue-600">
+    <h3 class="text-2xl font-semibold text-blue-700">State Subsidy Scheme (Maharashtra Example)</h3>
+    <p class="mt-2 text-gray-700">State-level subsidy for rooftop rainwater harvesting systems in urban & rural households.</p>
+
+    <div class="mt-6 flex gap-4 flex-wrap">
+      <a href="https://maharashtra.gov.in/" target="_blank"
+         class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+        Apply Now
+      </a>
+      <button onclick="downloadDocs('state')" 
+              class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+        Required Documents
+      </button>
+    </div>
+  </div>
+
+  <! Scheme 4 >
+  <div class="bg-white shadow-lg rounded-xl p-8 border-l-4 border-red-600">
+    <h3 class="text-2xl font-semibold text-red-700">Jal Jeevan Mission (JJM)</h3>
+    <p class="mt-2 text-gray-700">Government of India’s flagship mission to provide safe drinking water through tap connections and encourage water conservation, including rainwater harvesting.</p>
+
+    <div class="mt-6 flex gap-4 flex-wrap">
+      <a href="https://jaljeevanmission.gov.in/" target="_blank"
+         class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+        Apply Now
+      </a>
+      <button onclick="downloadDocs('jjm')" 
+              class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+        Required Documents
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-200 text-center py-6">
+  <p>Team JalRakshak 1.0</p>
+</footer>
+
+<script src="schemes.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | JalRakshak 1.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Leaflet.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+  <style>
+    body { font-family: 'Inter', sans-serif; background: url('back.jpeg') no-repeat center center fixed; background-size: cover; }
+    h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+    #map { height: 400px; border-radius: 12px; }
+  </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="flex items-center justify-between px-8 py-4 shadow-md bg-white/30 backdrop-blur-md">
+  <div class="flex items-center space-x-3">
+    <img src="LOGO.jpeg" alt="JalRakshak Logo" class="w-12 h-12">
+    <span class="text-2xl font-bold text-white">JalRakshak 1.0</span>
+  </div>
+  <div class="flex items-center space-x-3">
+    <a href="index.html" class="px-4 py-2 rounded-lg bg-green-600/80 backdrop-blur-sm text-white font-semibold hover:bg-green-700 transition">
+      ← Back to Home
+    </a>
+    <a href="profile.html">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Profile" class="w-12 h-12 rounded-full border-2 border-white cursor-pointer hover:scale-105 transition">
+    </a>
+  </div>
+</nav>
+
+<!-- Dashboard Content -->
+<main class="flex-1 px-8 py-10">
+  <h1 class="text-3xl font-bold text-white mb-8">Welcome, <span id="userName">User</span> 👋</h1>
+
+  <!-- Step 1: Input -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-white mb-4">1. Input</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Location -->
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Location</label>
+        <select id="locationSelect" 
+          class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70 backdrop-blur-sm 
+                 focus:ring-2 focus:ring-green-500 outline-none">
+          <option value="">Loading locations…</option>
+        </select>
+        <p id="locationMeta" class="mt-2 text-sm text-gray-700 hidden"></p>
+      </div>
+
+      <!-- Number of Dwellers -->
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Number of Dwellers</label>
+        <input type="number" id="dwellersInput" placeholder="e.g. 5" min="0"
+          class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70 backdrop-blur-sm 
+                 focus:ring-2 focus:ring-green-500 outline-none">
+      </div>
+
+      <!-- Roof Type Dropdown -->
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Roof Type</label>
+        <select id="roofTypeInput" 
+          class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70 backdrop-blur-sm 
+                 focus:ring-2 focus:ring-green-500 outline-none">
+          <option value="Concrete">Concrete</option>
+          <option value="Metal">Metal</option>
+        </select>
+      </div>
+
+      <!-- Floors (new) -->
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Floors (number)</label>
+        <input type="number" id="floors" placeholder="e.g. 1" min="0" value="1"
+          class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70 backdrop-blur-sm 
+                 focus:ring-2 focus:ring-green-500 outline-none">
+        <p class="mt-2 text-xs text-gray-600">Used to compute pipe length = floors × floor height.</p>
+      </div>
+
+      <!-- Soil Type (new) -->
+      <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+        <label class="block text-sm font-medium text-gray-700">Soil Type</label>
+        <select id="soilType"
+          class="w-full mt-2 px-4 py-2 border rounded-lg bg-white/70 backdrop-blur-sm 
+                 focus:ring-2 focus:ring-green-500 outline-none">
+          <option value="loamy" selected>Loamy</option>
+          <option value="sandy">Sandy</option>
+          <option value="clayey">Clayey</option>
+        </select>
+        <p class="mt-2 text-xs text-gray-600">Soil affects infiltration fraction used for pit sizing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2: Map -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-white mb-4">2. Mark Your Roof</h2>
+    <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow">
+      <div id="map"></div>
+      <p class="mt-3 text-sm text-gray-700">Mark the points of polygon over your roof to calculate its area and click finish.</p>
+      <p class="mt-2 font-semibold text-blue-600">Roof Area: <span id="roofArea">0</span> m²</p>
+    </div>
+  </section>
+
+  <!-- Step 3: Analysis -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-white mb-4">3. Analysis</h2>
+    <div class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow flex flex-col items-center">
+      <button id="analyzeBtn" class="bg-green-600/90 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+        Run Feasibility Analysis
+      </button>
+      <div id="analysisResult" class="mt-6 text-center text-gray-800 hidden"></div>
+    </div>
+  </section>
+
+  <!-- Step 4: Design -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-semibold text-white mb-4">4. Design Suggestions</h2>
+    <div id="designCard" class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow hidden"></div>
+  </section>
+
+  <!-- Step 5: Output -->
+  <section>
+    <h2 class="text-2xl font-semibold text-white mb-4">5. Impact Report</h2>
+    <div id="outputCard" class="p-6 bg-white/40 backdrop-blur-lg rounded-2xl shadow hidden text-center"></div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-900/70 backdrop-blur-md text-gray-200 text-center py-6">
+  <p>&copy; We’re actively working on — Open space inclusion, including 2D/3D visualization, groundwater analysis, and the remaining promised features — to make JalRakshak a truly end-to-end water sustainability platform.</p>
+</footer>
+
+<!-- Turf.js -->
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<!-- html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Your app script -->
+<script src="dashboard.js"></script>
+</body>
+</html>

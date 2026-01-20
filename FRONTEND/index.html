@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JalRakshak - Rainwater Harvesting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --nav-h: 72px; 
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding-top: var(--nav-h);
+      background: url('back.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+
+    nav {
+      min-height: var(--nav-h);
+      z-index: 60; 
+    }
+
+    .backdrop-blur-nav { 
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .hero-overlay { 
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 1rem;
+      padding: 3rem;
+    }
+
+    /* mobile menu should appear directly below the nav */
+    #mobile-menu {
+      top: var(--nav-h);
+      z-index: 55;
+    }
+
+    /* remove hero negative margin and ensure predictable layout */
+    .hero-section-wrap { margin-top: 0; }
+
+    footer { z-index: 10; }
+
+   
+    @media (max-width: 640px) {
+      
+      /* :root { --nav-h: 88px; } */
+    }
+  </style>
+</head>
+<body class="text-gray-900">
+
+<!-- Navbar -->
+<nav class="fixed top-0 left-0 w-full flex items-center justify-between px-6 md:px-8 py-3 backdrop-blur-nav bg-gradient-to-r from-green-700/75 to-blue-600/65 shadow-md">
+  <a href="#" class="flex items-center space-x-3">
+    <img src="LOGO.jpeg" alt="JalRakshak Logo" class="w-10 h-10 rounded-full shadow-lg">
+    <span class="text-2xl font-bold text-white">JalRakshak 1.0</span>
+  </a>
+
+  <div class="hidden md:flex space-x-6 items-center px-4 py-2 rounded-full bg-white/10 shadow-lg">
+    <a href="#" class="text-white hover:text-yellow-300 font-medium transition">Home</a>
+    <a href="#features" class="text-white hover:text-yellow-300 font-medium transition">Features</a>
+    <a href="#about" class="text-white hover:text-yellow-300 font-medium transition">About</a>
+    <a href="contact.html" class="text-white hover:text-yellow-300 font-medium transition">Contact</a>
+    <a href="auth.html" class="bg-amber-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-amber-600 transition shadow-md">
+      Get Started
+    </a>
+    <a href="schemes.html" class="bg-emerald-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-emerald-700 transition shadow-md">
+      Govt Schemes
+    </a>
+  </div>
+
+  <!-- Mobile Button -->
+  <div class="md:hidden">
+    <button id="mobile-menu-button" aria-label="Toggle menu" class="text-white focus:outline-none">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden fixed right-0 w-full bg-gradient-to-b from-green-800/95 to-blue-700/95 text-center py-6 space-y-4">
+  <a href="#" class="block text-white hover:text-yellow-300">Home</a>
+  <a href="#features" class="block text-white hover:text-yellow-300">Features</a>
+  <a href="#about" class="block text-white hover:text-yellow-300">About</a>
+  <a href="contact.html" class="block text-white hover:text-yellow-300">Contact</a>
+  <a href="schemes.html" class="block mx-auto w-3/4 bg-yellow-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 transition shadow-md">
+    Govt Schemes
+  </a>
+  <a href="auth.html" class="block mx-auto w-3/4 bg-green-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-green-700 transition shadow-md">
+    Get Started
+  </a>
+</div>
+
+<!-- Hero Section -->
+<section id="home" class="hero-section-wrap h-screen flex items-center justify-center relative">
+  <div class="text-center px-6 md:px-12 w-full max-w-4xl hero-overlay shadow-2xl rounded-3xl border border-emerald-200">
+    <h1 class="text-4xl md:text-6xl font-bold text-emerald-700 leading-tight drop-shadow-md">
+      Nurture the Drop,<br /> Grow a Greener Tomorrow 🌿
+    </h1>
+    <p class="mt-6 text-lg md:text-xl text-gray-700 font-medium">
+      On-spot Rooftop Rainwater Harvesting & Recharge Assessment<br>AI + GIS powered platform that calculates feasibility, structure design, costing, and recharge potential — instantly.
+    <div class="mt-8 flex justify-center space-x-4 flex-wrap gap-4">
+      <a href="auth.html" class="bg-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-amber-600 transition shadow-lg">
+        Try Now
+      </a>
+      <a href="schemes.html" class="bg-emerald-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-emerald-700 transition">
+        Govt Schemes
+      </a>
+      <a href="#about" class="bg-sky-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-sky-700 transition">
+        Learn More
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-20 bg-green-50/80">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center text-green-800">Key Features</h2>
+    <div class="mt-12 grid md:grid-cols-3 gap-10 text-center">
+      <div class="p-8 bg-white/70 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition">
+        <img src="https://cdn-icons-png.flaticon.com/512/728/728093.png" alt="Rooftop Analysis Icon" class="w-16 h-16 mx-auto" />
+        <h3 class="mt-4 text-2xl font-semibold text-green-700">Rooftop & Open Space Assessment</h3>
+        <p class="text-gray-700 mt-2">First tool that includes courtyards, lawns, and paved areas along with rooftops.</p>
+      </div>
+      <div class="p-8 bg-white/70 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition">
+        <img src="https://cdn-icons-png.flaticon.com/512/1903/1903162.png" alt="Cost Estimation Icon" class="w-16 h-16 mx-auto" />
+        <h3 class="mt-4 text-2xl font-semibold text-green-700">Smart Feasibility & Design</h3>
+        <p class="text-gray-700 mt-2">Auto-calculated tank, pit, and recharge structure sizing using engineering formulas.</p>
+      </div>
+      <div class="p-8 bg-white/70 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition">
+        <img src="https://cdn-icons-png.flaticon.com/512/553/553416.png" alt="Rain Prediction Icon" class="w-16 h-16 mx-auto" />
+        <h3 class="mt-4 text-2xl font-semibold text-green-700">Costing, Aquifer & Schemes</h3>
+        <p class="text-gray-700 mt-2">Transparent estimates, aquifer classification, and direct government scheme access.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" class="py-20 bg-green-100/90">
+  <div class="container mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold text-green-800">About Our Mission</h2>
+    <p class="mt-6 max-w-3xl mx-auto text-gray-800 text-lg leading-relaxed bg-white/70 p-6 rounded-xl shadow-md">
+      JalRakshak combines rainfall data, GIS mapping, runoff, soil infiltration, and costing into one simple tool. Our mission is to turn every rooftop and open space into a water solution — empowering citizens and securing sustainable groundwater.
+    </p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-300 pt-12">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+    <div>
+      <h2 class="text-2xl font-bold text-white">JalRakshak</h2>
+      <p class="mt-3 text-gray-400 text-sm leading-relaxed">
+        Empowering communities to conserve water and promote sustainability
+        with AI-driven rainwater harvesting solutions.
+      </p>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold text-white mb-3">Quick Links</h3>
+      <ul class="space-y-2 text-gray-400">
+        <li><a href="#" class="hover:text-green-400 transition">Home</a></li>
+        <li><a href="#features" class="hover:text-green-400 transition">Features</a></li>
+        <li><a href="#about" class="hover:text-green-400 transition">About</a></li>
+        <li><a href="schemes.html" class="hover:text-green-400 transition">Govt Schemes</a></li>
+        <li><a href="contact.html" class="hover:text-green-400 transition">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold text-white mb-3">Connect with Us </h3>
+      <p class="mt-3 text-gray-400 text-sm leading-relaxed">teamjalrkashak@gmail.com</p>
+      <div class="flex space-x-4 mt-4">
+        <a href="#" class="text-gray-400 hover:text-green-400 transition" aria-label="LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 0h-14c-2.761..."></path>
+          </svg>
+        </a>
+        <a href="#" class="text-gray-400 hover:text-green-400 transition" aria-label="Twitter">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M24 4.557c-0.883..."></path>
+          </svg>
+        </a>
+        <a href="#" class="text-gray-400 hover:text-green-400 transition" aria-label="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 .297c-6.63 0..."></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10 border-t border-gray-700 py-6 text-center text-gray-400 text-sm">
+    <p>2025 Team JalRakshak_1.0</p>
+  </div>
+</footer>
+
+<!-- Inline JS (mobile menu only) -->
+<script>
+  // Mobile menu toggle
+  const mobileBtn = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileBtn && mobileBtn.addEventListener('click', () => {
+    if (!mobileMenu) return;
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Close mobile menu when clicking a link inside it
+  mobileMenu && mobileMenu.addEventListener('click', (e) => {
+    if (e.target && e.target.tagName === 'A') mobileMenu.classList.add('hidden');
+  });
+</script>
+</body>
+</html>
