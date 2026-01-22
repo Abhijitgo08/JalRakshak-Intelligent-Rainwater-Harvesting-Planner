@@ -10,9 +10,9 @@ module.exports = function (req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || 'supersecretkey';
+    const decoded = jwt.verify(token, secret);
 
-    // Keep the full decoded user object for reference
     req.user = decoded.user || decoded;
 
     // Set a stable req.userId so routes/location.js can find it
